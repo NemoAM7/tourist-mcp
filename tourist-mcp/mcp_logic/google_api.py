@@ -2,8 +2,21 @@ from typing import Any
 import httpx
 from config import GOOGLE_MAPS_API_KEY
 from .models import PlaceInfo, PlacePhoto, PlaceReview
+import base64
 
 PLACES_API_BASE_URL = "https://maps.googleapis.com/maps/api/place/"
+
+async def fetch_and_encode_photo(photo_url: str) -> str | None:
+    """Downloads an image from a URL and encodes it to a Base64 string."""
+    async with httpx.AsyncClient(timeout=20) as client:
+        try:
+            resp = await client.get(photo_url)
+            resp.raise_for_status()
+            image_bytes = resp.content
+            return base64.b64encode(image_bytes).decode("utf-8")
+        except httpx.HTTPStatusError as e:
+            print(f"Failed to download image: {e}")
+            return None
 
 async def _call_places_api(endpoint: str, params: dict[str, Any]) -> dict:
     """A generic helper to call the Google Places API."""
