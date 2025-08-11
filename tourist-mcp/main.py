@@ -11,6 +11,7 @@ mcp = FastMCP(
 
 register_tools(mcp)
 
+#main function
 async def main():
     """Starts the MCP server."""
     print("Starting WhatsApp Local Guide MCP server on http://0.0.0.0:8088")
